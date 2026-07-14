@@ -36,7 +36,7 @@ html_theme_options = {
                 },
                 {
                     "title": "CAIC Python",
-                    "url": "caicpython",
+                    "url": "caic-python",
                     "summary": "Interact with Colorado Avalanche Information Center programmatically.",
                 },
                 {
@@ -72,7 +72,7 @@ html_theme_options = {
             "children": [
                 {
                     "title": "Lookup Storm",
-                    "url": "stormlibpp/pkgs/lookupstorm",
+                    "url": "stormlibpp/pkgs/lookup-storm",
                     "summary": "Easily lookup common atomic indicators.",
                 },
                 {
