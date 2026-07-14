@@ -1,0 +1,55 @@
+name: Build and push the docs site to GitHub Pages
+
+on:
+  repository_dispatch:
+    types: [doc-release]        # fired by a project repo when its docs are released
+  workflow_dispatch:            # manual "Run workflow" button + CLI/API
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-docs-site
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14.6"
+
+      - name: Install Sphinx build deps
+        run: pip install pipenv && make setup
+
+      - name: Build landing page and pull the main docs from this repo's latest release
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_RELEASE_TOKEN }}
+        run: make docs
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
