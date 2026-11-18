@@ -13,8 +13,8 @@ main-docs: # Copy README.md to doc/index.md and build the docs in "doc/"
 	pipenv run sphinx-build -b dirhtml doc/ docs/
 
 # Download each project's docs.tar.gz from its LATEST release and extract
-# it into docs/<repo>/. Missing assets warn and are skipped so one lagging
-# project does not fail the whole build.
+# it into docs/<repo>/. A failed download warns with gh's error message and
+# is skipped so one lagging project does not fail the whole build.
 .PHONY: pull-docs
 pull-docs: # Pull the latest docs.tar.gz from each project and extract into "docs/<repo>/"
 	@while read -r url; do \
@@ -23,14 +23,15 @@ pull-docs: # Pull the latest docs.tar.gz from each project and extract into "doc
 		owner_repo=$${url#https://github.com/}; \
 		echo "Pulling docs for $$owner_repo"; \
 		mkdir -p "docs/$$repo"; \
-		if gh release download --repo "$$owner_repo" \
+		if err=$$(gh release download --repo "$$owner_repo" \
 		     --pattern 'docs.tar.gz' \
 		     --output "$$repo.tar.gz" \
-		     --clobber; then \
+		     --clobber 2>&1); then \
 			tar -xzf "$$repo.tar.gz" -C "docs/$$repo"; \
 			rm -f "$$repo.tar.gz"; \
 		else \
-			echo "::warning::No docs.tar.gz in latest release of $$owner_repo; skipping"; \
+			err=$$(printf '%s' "$$err" | tr -s '\n' ' '); \
+			echo "::warning::Could not pull docs.tar.gz for $$owner_repo: $${err:-unknown error}; skipping"; \
 			rmdir "docs/$$repo" 2>/dev/null || true; \
 		fi; \
 	done < projects.txt
