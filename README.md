@@ -15,6 +15,8 @@ Documentation for my open source projects:
         - A tool to download, scrape, and model the contents of any URL from the web.
     - [stix](https://docs.gormo.co/stormlibpp/pkgs/stix/)
         - An extension to the builtin `stix` Storm Library methods that rely on the `StormLib++` project's custom stix ingestion config.
+- [NeuralUI](https://docs.gormo.co/neuralui/)
+    - A lightweight web UI for the open source Synapse Cortex, built as a Synapse service.
 - [PyHatching](https://docs.gormo.co/pyhatching/)
     - An async HTTP client to interact with the [Hatching Triage Sandbox](https://docs.gormo.co/https://tria.ge) API.
 - [CAIC Python](https://docs.gormo.co/caic-python/)
